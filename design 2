@@ -1,0 +1,1613 @@
+⚡ FLASH USDT TOOL — Visual UI Flow Specification
+
+---
+
+# SCREEN 00 — Splash Screen
+
+STATE: Initial Load
+
+Logo [Animated — fade in 0.8s]
+↓
+"Connecting to Blockchain..." [Text — typewriter effect]
+↓ 0.4s
+"Loading Modules..." [Text — typewriter effect]
+↓ 0.4s
+"Verifying License..." [Text — typewriter effect]
+↓
+[ProgressBar — 0% → 100% — green gradient — 1.2s]
+↓ complete
+→ SCREEN 01 — Login
+
+---
+
+# SCREEN 01 — Login / License Activation
+
+[Card — centered — dark bg — rounded]
+
+  Logo [small — top center]
+
+  "License Activation" [h1 — white bold]
+
+  [Input — "XXXX-XXXX-XXXX-XXXX" placeholder — monospace — full width]
+    STATE idle → border: gray
+    STATE focus → border: green + glow
+    STATE error → border: red + shake animation
+    STATE success → border: green solid
+
+  [Button "Activate" — green gradient — full width — rounded]
+    ↓ on click
+    STATE loading → [Spinner — circle rotating — replaces button text]
+    ↓ 2s
+    STATE success → [Icon ✓ — green pulse animation]
+    ↳ → SCREEN 02 — Dashboard [slide down exit + fade in enter]
+    STATE error → border red on Input + "Invalid License Key" [text — red — below Input]
+
+---
+
+# SCREEN 02 — Dashboard
+
+LAYOUT
+
+  [Sidebar — left — dark bg — narrow]
+    Logo [small — top]
+    [Divider]
+    [NavItem "Dashboard" — icon grid — ACTIVE: green bg + left green bar]
+    [NavItem "Contract Engine" — icon code]
+    [NavItem "Minting" — icon hammer]
+    [NavItem "Flash Sender" — icon arrow-up]
+    [NavItem "Wallet Manager" — icon wallet]
+    [NavItem "Networks" — icon globe]
+    [NavItem "TX History" — icon clock]
+    [NavItem "Settings" — icon gear]
+    [NavItem "License" — icon key]
+    [Divider]
+    [StatusDot green] "Connected — TRON Mainnet" [text — small]
+
+  [TopBar — right]
+    "Dashboard" [h1 — left — white bold]
+    [IconBell] [BadgeDot red — if notifications]
+    [WalletChip "TLa5...7mKq" — rounded — dark]
+    [IconDots — 3 vertical]
+      ↓ on click
+      [Dropdown — slide down]
+        "Settings"
+        "Disconnect Wallet"
+        "About"
+
+  [MainContent]
+
+    ROW STATS CARDS — 4 equal cards — hover: lift + shadow
+
+      CARD 1
+        [Icon $ — green]
+        "Sent Today" [label — gray small]
+        "$125,000" [h2 — white bold — count-up animation on load]
+
+      CARD 2
+        [Icon arrows — green]
+        "Transactions" [label]
+        "12" [h2 — count-up]
+
+      CARD 3
+        [Icon balance]
+        "Daily Remaining" [label]
+        "$4,875,000" [h2 — count-up]
+
+      CARD 4
+        [Icon shield]
+        "License" [label]
+        "Pro — 87 days" [h2 — green]
+
+    "Recent Transactions" [h3 — white]
+
+    [Table — dark bg]
+      HEADER ROW
+        "Time" "Recipient" "Amount" "Network" "Status"
+      DATA ROW — hover: bg lighten
+        "14:32" "TQx7k...8kPm" "10,000 USDT" [Badge "TRC20"] [Dot green] "Confirmed"
+        ↓ on click
+        → [Modal TX Detail — scale-up animation] → see MODAL TXD
+      DATA ROW
+        "13:15" "0xAbC...3fE2" "25,000 USDT" [Badge "ERC20"] [Dot yellow] "Pending"
+
+    [Button "⚡ New Flash" — green gradient — center — glow on hover]
+      ↓ on click
+      → SCREEN 06 — Flash Sender [slide left]
+
+  [RightPanel]
+    "Quick Stats" [h4]
+    [DonutChart — green used / gray remaining — rotate animation on load]
+    [Legend]
+      [Dot green] "Used: $125,000"
+      [Dot gray] "Remaining: $4,875,000"
+
+SIDEBAR NAV INTERACTION
+  [NavItem] hover → bg: gray light [transition 150ms]
+  [NavItem] click → current content slide right + fade out → new content slide left + fade in [200ms]
+  [TopBar title] → fade change to new screen name
+
+NOTIFICATIONS
+  [IconBell] click → [Dropdown slide down]
+    [NotifCard — blue dot — unread]
+      "Mint Successful – 10M USDT"
+      [timestamp small]
+    [NotifCard]
+      "TX Confirmed – 20/20"
+    ↓ click any card
+    → navigate to related screen
+
+---
+
+# SCREEN 03 — Contract Engine
+
+## SUB-SCREEN 03.1 — Template Selection
+
+[Stepper — horizontal — top]
+  [Step 1 "Template" — ACTIVE: circle green filled]
+  → [Step 2 "Configure" — circle gray]
+  → [Step 3 "Code" — circle gray]
+  → [Step 4 "Compile" — circle gray]
+  → [Step 5 "Deploy" — circle gray]
+  → [Step 6 "Verify" — circle gray]
+
+"Select Token Template" [h2]
+
+[Grid — 4 columns — template cards]
+
+  CARD "USDT"
+    [Icon USDT green circle — large]
+    "Tether USD" [h4 bold]
+    "USDT" [label gray]
+    "Decimals: 6" [small]
+    [Button "Select" — border green]
+    STATE hover → lift + border glow green
+    STATE selected → border green solid + [BadgeCheckmark ✓ — top right — pop animation] + other cards dim 40%
+
+  CARD "USDC"
+    [Icon USDC blue circle]
+    "USD Coin" [h4]
+    "USDC" [label]
+    "Decimals: 6"
+    [Button "Select" — border blue]
+
+  CARD "BUSD"
+    [Icon BUSD yellow]
+    "Binance USD"
+    "BUSD"
+    "Decimals: 18"
+    [Button "Select"]
+
+  CARD "DAI"
+    [Icon DAI orange]
+    "Dai Stablecoin"
+    "DAI"
+    "Decimals: 18"
+    [Button "Select"]
+
+  CARD "Custom"
+    [Icon + gray large]
+    "Custom Token"
+    "Define your own"
+    [Button "Select"]
+
+[Divider]
+
+"Template Type" [label]
+[RadioGroup — horizontal]
+  ○ Basic Clone
+  ○ Advanced (Mint/Burn)
+  ● Full Feature
+  ○ Proxy Upgradeable
+  ↓ hover any option
+  [Tooltip — slide down — below selected option — description text]
+
+[FooterRow]
+  [Button "Cancel" — text gray — no bg]                [Button "Next →" — green — right]
+    ↓ on click Next
+    [Stepper] Step 1 → ✓ green, Step 2 → ACTIVE green
+    → SUB-SCREEN 03.2 [slide left]
+
+---
+
+## SUB-SCREEN 03.2 — Configuration
+
+[Stepper] Step 1 ✓ → Step 2 ACTIVE → ...
+
+"Token Parameters" [h2]
+
+SECTION "Basic Info"
+
+  [Label "Token Name"]
+  [Input "Tether USD" — prefilled — disabled — gray bg]
+  [Icon 🔒 — green — right of input]
+  hover [Icon 🔒] → [Tooltip "Auto-filled from template"]
+
+  [Label "Token Symbol"]
+  [Input "USDT" — disabled]
+  [Icon 🔒]
+
+  [Label "Decimals"]
+  [Input "6" — disabled]
+  [Icon 🔒]
+
+  [Label "Initial Supply"]
+  [Input "1,000,000,000" — editable]
+    STATE focus → border green + glow
+    STATE typing → live validation below
+  "Total tokens to create on deployment" [hint — gray small — below input]
+
+[Divider]
+
+SECTION "Functions"
+
+  "Enabled Functions" [label]
+
+  [Row]
+    "transfer / transferFrom / approve" [text]
+    [Toggle — green — ON — disabled]
+    [Badge "Required" — gray small]
+
+  [Row]
+    "mint()" [text]
+    [Toggle — green — ON — editable]
+    hover → [Tooltip "Allows creating new tokens"]
+
+  [Row]
+    "burn()" [text]
+    [Toggle — green — ON]
+
+  [Row]
+    "pause() / unpause()" [text]
+    [Toggle — gray — OFF]
+    click → [Toggle slides to green — 200ms]
+
+  [Row]
+    "blacklist()" [text]
+    [Toggle — gray — OFF]
+
+  [Row]
+    "renounceOwnership()" [text]
+    [Toggle — gray — OFF]
+
+[Divider]
+
+SECTION "Access Control"
+
+  "Who can mint?" [label]
+
+  [RadioGroup — vertical]
+    ● Owner Only (onlyOwner)
+    ○ Role-Based Access
+    ○ No Restriction [Icon ⚠ yellow]
+
+  [Label "Max Supply Cap"]
+  [Input "10,000,000,000"]
+  [Toggle "Unlimited" — right of input]
+    STATE ON → input disabled + gray bg
+    STATE OFF → input enabled
+
+[Divider]
+
+SECTION "Advanced Settings" [Collapsible]
+  [Row "Advanced Settings" — full width — clickable]
+  [Icon ▼ — right — rotates to ▲ when open]
+  ↓ click → accordion expand [200ms ease]
+
+    [Label "Solidity Version"]
+    [Select ▼ "v0.8.19"]
+
+    [Label "Optimizer"]
+    [Toggle — green — ON]
+    [Input "200" — label "Runs" — right]
+
+    [Label "EVM Version"]
+    [Select ▼ "Paris"]
+
+    [Label "License"]
+    [Select ▼ "MIT"]
+
+[FooterRow]
+  [Button "← Back" — gray]                [Button "Next →" — green]
+    ↓ click Next
+    Step 2 ✓ → Step 3 ACTIVE
+    → SUB-SCREEN 03.3
+
+---
+
+## SUB-SCREEN 03.3 — Code Preview
+
+[Stepper] ✓ ✓ → Step 3 ACTIVE → ...
+
+[CodeEditor — full width — dark bg #0d0d0d]
+
+  [EditorToolbar — top of editor]
+    [Button "Copy All" — icon copy — small]
+      ↓ click → [Toast "Code copied ✅" — green — bottom right — fade in → 3s → fade out]
+    [Button "Edit" — icon pencil]
+      ↓ click → editor switches to editable mode + green border appears
+    [Button "Reset" — icon refresh]
+      ↓ click → [ConfirmDialog "Reset to generated code?" Yes/No]
+    [Button "Fullscreen" — icon expand]
+
+  [LineNumbers — gray — left column]
+    1
+    2
+    3
+    ...
+
+  [CodeContent — syntax highlighted]
+    [keyword purple] "pragma" [white] "solidity ^0.8.19;"
+    [keyword purple] "import" [string green] "@openzeppelin/contracts/..."
+    [keyword purple] "contract" [name white] "FlashToken" [keyword purple] "is" [name white] "ERC20, Ownable {"
+    [keyword purple]"constructor" [white] "() ERC20(" [string green] '"Tether USD"' [white] ", " [string green] '"USDT"' [white] ") {"
+    [method yellow] "_mint" [white] "(msg.sender, initialSupply);"
+    ...
+
+[RightPanel — beside editor]
+
+  "Code Summary" [label]
+  [Icon code green]
+  "Lines: 142" [stat — green number]
+  "Size: 4.8 KB"
+  "Functions: 12"
+  "Events: 2"
+
+[FooterRow]
+  [Button "← Back"]                [Button "Compile →" — green]
+    ↓ click Compile
+    → SUB-SCREEN 03.4
+
+---
+
+## SUB-SCREEN 03.4 — Compile
+
+[Stepper] ✓ ✓ ✓ → Step 4 ACTIVE → ...
+
+STATE: Compiling
+
+  [SpinnerLarge — circle — green — center screen — rotating]
+  "Compiling..." [h3 — center — below spinner]
+
+  [StatusLines — appear one by one — slide in from left]
+    "Analyzing imports..." [dot yellow pulsing]
+    ↓ 0.8s → [dot ✓ green static]
+    "Checking syntax..." [dot yellow]
+    ↓ → [dot ✓]
+    "Generating bytecode..." [dot yellow]
+    ↓ → [dot ✓]
+    "Creating ABI..." [dot yellow]
+    ↓ → [dot ✓]
+
+STATE: Success [transition from spinner to ✓ — pop animation]
+
+  [Icon ✓ — large — green circle — center — scale-up pop]
+  "Compilation Successful" [h2 — green — center]
+
+  [TwoColumnCards — slide up from bottom — staggered 100ms]
+
+    CARD LEFT "Bytecode"
+      [CodeBlock — monospace — dark bg — truncated]
+        "0x608060405234801561001057600080fd..."
+      "Size: 4,847 bytes" [small gray]
+      [Button "Copy" — small — border gray]
+        ↓ click → [Icon ✓ on button — 1s] + [Toast "Copied"]
+
+    CARD RIGHT "ABI"
+      [CodeBlock — syntax highlighted JSON — truncated]
+        [bracket yellow] "["
+        [brace yellow] "{"
+        [key blue] "type" [white] ": " [string green] '"function"'
+        ...
+      "12 functions" [small gray]
+      [Button "Copy"]
+
+STATE: Error
+
+  [Icon ✗ — large — red circle — center]
+  "Compilation Failed" [h2 — red]
+  [ErrorCard — red bg semi-transparent]
+    "Error at line 47: undeclared identifier 'initialSupply'"
+    [inline in CodeEditor — red highlight on line 47]
+
+[FooterRow]
+  [Button "← Back to Code"]                [Button "Deploy →" — green]
+
+---
+
+## SUB-SCREEN 03.5 — Deploy
+
+[Stepper] ✓ ✓ ✓ ✓ → Step 5 ACTIVE → ...
+
+"Select Network" [h3]
+
+[NetworkCards — horizontal scroll row]
+
+  CARD "TRON"
+    [Icon TRON red — large]
+    "TRON (TRC-20)"
+    "~3s" [speed — gray small]
+    "~$0.50" [cost — gray small]
+    STATE hover → border glow
+    STATE selected → bg green semi-transparent + border green solid
+
+  CARD "BSC"
+    [Icon BNB yellow]
+    "BSC (BEP-20)"
+    "~3s / ~$0.05"
+
+  CARD "Ethereum"
+    [Icon ETH blue]
+    "Ethereum (ERC-20)"
+    "~15s / ~$5–50"
+
+  CARD "Polygon"
+    [Icon MATIC purple]
+    "Polygon"
+    "~2s / ~$0.01"
+
+  CARD "Solana"
+    [Icon SOL gradient]
+    "Solana"
+
+  CARD "Arbitrum"
+    [Icon ARB blue-dark]
+    "Arbitrum"
+
+[Divider — "Testnets" label centered]
+
+[NetworkCards — smaller — dashed border]
+  CARD "TRON Nile"
+  CARD "BSC Testnet"
+  CARD "Ethereum Sepolia"
+
+STATE: network switch
+  previous card → border fade to gray
+  new card → border glow to green [150ms]
+
+[Divider]
+
+"Deploy Wallet" [h3]
+
+  [WalletInfoRow]
+    [Icon wallet green]
+    "TLa5xQ...7mKq2" [monospace]
+    [Button "Copy" — icon — tiny]
+    [Dot green] "Connected"
+  [Row]
+    "1,250 TRX ($150.00)" [balance — green]
+
+[Divider]
+
+"Estimated Cost" [h3]
+
+  "Gas Estimate:" "~85 TRX" [value — white]
+  "Fee in USD:" "$10.20"
+  "Wallet Balance:" "1,250 TRX" [Icon ✓ green]
+
+[Button "🚀 Deploy Contract" — green gradient — large — center — green glow shadow]
+  STATE hover → glow intensifies
+  STATE disabled → gray bg + not-allowed cursor [if validations fail]
+  ↓ click
+  → [Modal Confirm — scale-up + backdrop fade in]
+
+    MODAL "Confirm Deployment"
+
+      "Token: Tether USD (USDT)"
+      "Network: TRON Mainnet"
+      "Cost: ~85 TRX ($10.20)"
+      [Divider]
+      [Button "Confirm Deploy" — green — large]
+      [Button "Cancel" — text gray]
+        ↓ Cancel → modal scale-down + backdrop fade out
+        ↓ Confirm Deploy → modal content swaps [fade]
+
+      MODAL STATE: Deploying [content swap — no close]
+
+        [StatusLines — sequential]
+          [Dot yellow pulsing] "Building transaction..."
+          ↓ → [Dot ✓]
+          [Dot yellow] "Signing with private key..."
+          ↓ → [Dot ✓]
+          [Dot yellow] "Broadcasting to network..."
+          ↓ → [Dot ✓]
+          [Dot yellow rotating] "Waiting for confirmation..."
+          ↓ → [Dot ✓]
+          [Dot green bold] "✅ Contract Deployed!" [h3 green bold]
+
+        [ResultCard — slide up]
+          "Contract Address" [label]
+          "TNew7Fake...AbCdEf" [monospace green large]
+          [Button "Copy" — tiny]
+          [Divider]
+          "TX Hash:" "a7f3c9...2b8e4d" [Button "Copy"] [Button "View Explorer" — blue link]
+          "Gas Used:" "78,432"
+          "Cost:" "72 TRX ($8.64)"
+          "Time:" "3.2 seconds"
+
+        [FooterRow inside modal]
+          [Button "Deploy Another" — gray]
+          [Button "Continue to Verify →" — green]
+            ↓ click
+            → modal closes + Step 5 ✓ → Step 6 ACTIVE
+            → SUB-SCREEN 03.6
+
+---
+
+## SUB-SCREEN 03.6 — Verify
+
+[Stepper] ✓ ✓ ✓ ✓ ✓ → Step 6 ACTIVE
+
+"Verify Contract Source Code" [h2]
+
+  "Contract Address" [label]
+  [Input "TNew7Fake...AbCdEf" — prefilled — disabled]
+  [Icon 🔒]
+
+  "Compiler Version" [label]
+  [Select ▼ "v0.8.19+commit.7dd6d404"]
+
+  "Optimization" [label]
+  [Toggle — green — ON]
+  [Input "200" — label "Runs"]
+
+  "Source Code" [label]
+  [StatusChip "Auto-attached ✅" — green bg]
+
+[Button "Verify & Publish" — blue — full width]
+  ↓ click
+  button → [Spinner inline — gray]
+  ↓ 2s
+  → below button: "✅ Contract Source Code Verified Successfully" [text green]
+
+  [PreviewCard — slide up]
+    "Tether USD (USDT)" [h4]
+    [Badge "✓ Verified" — green]
+    [TabRow]
+      [Tab "Read Contract"] [Tab "Write Contract"]
+    "Holders: 1 — Transfers: 0 — Price: N/A"
+
+  [Button "✅ Done — Go to Minting" — green — large]
+    ↓ click
+    [ConfettiEffect — particles — 1.5s]
+    → SCREEN 04 — Minting [slide left]
+
+---
+
+# SCREEN 04 — Minting Module
+
+LAYOUT
+  [MainArea — 70% left]
+  [RightPanel — 30% right]
+
+[ContractStatusBar — top — full width]
+  [Dot green pulsing] "Connected to: Tether USD (USDT) — TNew7...AbCd — TRON"
+  [Button "Change" — text blue small]
+    ↓ click
+    → [Modal "Select Contract" — list of deployed contracts]
+      [ContractRow] "USDT – TNew7...AbCd – TRON" [Button "Select"]
+      [ContractRow] "USDT – 0xBe3...9fA2 – BSC"  [Button "Select"]
+      ↓ Select → modal close + bar updates
+
+[TabRow]
+  [Tab "Quick Mint" — ACTIVE — underline green]
+  [Tab "Batch Mint"]
+  [Tab "Mint History"]
+  ↓ click tab → underline slides to tab [200ms] + content fade swap
+
+---
+
+## TAB — Quick Mint
+
+[MintCard — large — dark bg — center]
+
+  "Mint Tokens" [h2 — white bold]
+
+  [Label "Amount"]
+  [Input — large — numeric — center text — big font]
+    "0" [placeholder]
+    STATE typing → live recalculation below [updates every keystroke]
+    STATE invalid (exceeds limit) → border red + "Exceeds daily limit" [red below]
+    STATE valid → border green
+
+  [QuickAmountRow — below input]
+    [Chip "1K"] [Chip "10K"] [Chip "100K"] [Chip "1M"] [Chip "10M"] [Chip "100M"] [Chip "1B"]
+    ↓ click chip → input fills + chip pulse green + chip bg turns green
+
+  [Label "Mint To"]
+  [RadioGroup — horizontal]
+    ● My Wallet 🔒 "TLa5xQ...7mKq2"
+    ○ Other Address
+    ↓ select Other Address → [Input "Enter recipient address..." — slide expand below]
+      STATE valid address → [Dot green ✓] beside input
+      STATE invalid → [Dot red ✗] + error text
+
+  [CalcCard — dark bg darker]
+    "Amount:" "10,000,000 USDT" [live — updates]
+    "Raw Value:" "10,000,000,000,000"
+    "Gas Estimate:" "~15 TRX ($1.80)"
+
+  [DailyLimitBar]
+    "Used: $125,000" [left]                     "Limit: $5,000,000" [right]
+    [ProgressBar — green fill — animated on update]
+    "2.5%" [center — gray small]
+
+  [Button "⚒️ Mint Now" — green gradient — large — full width — glow]
+    STATE disabled → gray [if amount empty or invalid]
+    ↓ click
+    → [Modal Confirm Mint — scale-up]
+
+      MODAL "Confirm Minting"
+        "Amount: 10,000,000 USDT"
+        "To: TLa5xQ...7mKq2 (My Wallet)"
+        "Gas: ~15 TRX ($1.80)"
+        [Button "Confirm" — green]
+        [Button "Cancel" — gray text]
+          ↓ Cancel → scale-down close
+          ↓ Confirm → modal content swaps
+
+        MODAL STATE: Executing
+          [StatusLines]
+            [Dot yellow] "Building mint transaction..." → [Dot ✓]
+            [Dot yellow] "Signing..." → [Dot ✓]
+            [Dot yellow] "Broadcasting..." → [Dot ✓]
+            [Dot yellow rotating] "Confirming..." [Counter "1/20 ... 10/20 ... 20/20"]
+            ↓ complete
+            [Icon ✓ large green — pop animation + particle burst]
+            "✅ 10,000,000 USDT Minted!" [h2 green bold]
+          [ResultCard]
+            "TX Hash:" "a9c3f7...2b8e4d" [Button "Copy"] [Button "Explorer" — link]
+            "Block:" "#58,234,920"
+            "Gas Used:" "48,732"
+            "New Balance:" "19,915,000 USDT" [green]
+          [Button "Close" — gray]
+          [Button "Mint Again" — green]
+          ↓ Close → modal fade close + [Toast "Mint Complete ✅" — green — bottom right]
+
+---
+
+## TAB — Batch Mint
+
+[ToolbarRow]
+  [Button "📄 Import CSV" — border gray]
+    ↓ click → [FileDialog opens]
+    ↓ file selected → table rows cascade-fill [50ms stagger per row]
+  [Button "+ Add Row" — text green]
+    ↓ click → new empty row slide-down to table
+
+[BatchTable]
+
+  HEADER ROW
+    "#" "Address" "Amount (USDT)" "Status" "Actions"
+
+  DATA ROW
+    "1"
+    [Input "Enter address..." — small — inline editable]
+      STATE focus → border green
+      STATE valid → [Dot green ✓ right]
+      STATE invalid → [Dot red ✗]
+    [Input "0" — numeric — small]
+    "Ready" [text gray]
+    [Button "✗" — red icon — delete]
+      ↓ click → row slide-up remove
+
+  DATA ROW
+    "2" [Input] [Input] "Ready" [Button ✗]
+
+  ADD ROW
+    [Button "+ Add Row" — full width — dashed border — dot green]
+
+[SummaryBar]
+  "Recipients:" "5"
+  "Total:" "190,000 USDT"
+  "Est. Gas:" "~40 TRX ($4.80)"
+  "Est. Time:" "~25s"
+
+"Execution Mode" [label]
+[Select ▼ "Sequential (Safer)"]
+  options: "Sequential (Safer)" / "Parallel (Faster)" / "MultiSend Contract (Cheapest)"
+
+[Toggle "Random delay between TXs" — gray — OFF]
+  STATE ON → slides green
+
+"On failure:" [label]
+[RadioGroup — horizontal]
+  ● Skip & Continue
+  ○ Stop All
+  ○ Retry 3x then Skip
+
+[Button "⚡ Bulk Mint" — green gradient — large]
+  ↓ click → [Modal Confirm — scale-up]
+    "Mint to 5 recipients — Total: 190,000 USDT"
+    [Button "Confirm"] [Button "Cancel"]
+    ↓ Confirm → modal becomes execution view
+
+    EXECUTION VIEW inside modal
+      [ProgressBar global — green — 0% → 100% — animated]
+      "2 / 5 Complete"
+
+      [StatusTable]
+        ROW 1: [Dot ✓ green] "TQx7k...8kPm" "10,000" "TX:a7f3.." "✅"
+        ROW 2: [Dot ✓ green] "TVm3a...2nLp" "50,000" "TX:b2d8.." "✅"
+        ROW 3: [Spinner yellow] "TRk9x...7wQs" "25,000" "Sending..." "🔄"
+        ROW 4: [Dot gray] "TAbc1...9DeF" "100,000" "Queued" "⏸"
+        ROW 5: [Dot gray] "TXyz7...3GhI" "5,000" "Queued" "⏸"
+
+      [Button "⏸ Pause"] [Button "⏭ Skip Current"] [Button "⏹ Cancel All"]
+
+      STATE complete →
+        [ProgressBar full green]
+        "✅ 5/5 Successful!" [h2 green]
+        [Toast "Bulk Mint Complete ✅"]
+        [Button "Done" — closes modal]
+
+---
+
+## TAB — Mint History
+
+[FilterRow]
+  [Tabs] [Tab "All" ACTIVE] [Tab "Successful"] [Tab "Failed"]
+  [Input "Search TX Hash or address..." — right — icon 🔍]
+  [Button "📥 Export CSV"] [Button "📥 Export JSON"]
+  ↓ filter change → table fade out → fade in with filtered results
+
+[HistoryTable]
+  HEADER: "Date/Time" "Amount" "To" "TX Hash" "Gas" "Status"
+
+  ROW 1 — hover: bg lighten + icon → right
+    "2026-08-16 14:32" "10,000,000 USDT" "TLa5x...7mKq" "a9c3f7...2b8e" "12 TRX" [Dot green] "✅"
+    ↓ click row → [Modal TX Detail — see MODAL TXD]
+
+  ROW 2
+    "2026-08-16 15:10" "5,000,000 USDT" "TLa5x...7mKq" "c4e8a2...7f1d" "11 TRX" [Dot green] "✅"
+
+  ROW 3
+    "2026-08-15 09:45" "100,000,000 USDT" "—" "—" "—" [Dot red] "❌ Limit exceeded"
+
+[Pagination]
+  [Button "← Prev" — gray disabled if page 1]
+  [PageNum "1"] [PageNum "2"] [PageNum "3"]
+  [Button "Next →"]
+  [Select ▼ "25 rows"] — right
+
+---
+
+# MODAL TXD — Transaction Detail Modal
+
+[Modal — scale-up enter — backdrop fade]
+  "Transaction Detail" [h3]
+  [Button "✕" — top right — closes: scale-down + backdrop fade]
+
+  [DetailRow] "TX Hash:" "a9c3f7...2b8e4d" [Button "Copy"] [Button "Explorer" link blue]
+  [DetailRow] "Type:" [Badge "Mint" blue]
+  [DetailRow] "Block:" "#58,234,920"
+  [DetailRow] "Timestamp:" "2026-08-16 14:32:07 UTC"
+  [DetailRow] "Status:" [Dot green] "SUCCESS"
+  [DetailRow] "Amount:" "10,000,000 USDT"
+  [DetailRow] "To:" "TLa5xQ...7mKq2" [Button "Copy"]
+  [DetailRow] "Gas Used:" "48,732"
+  [DetailRow] "Fee:" "12 TRX ($1.44)"
+  [DetailRow] "Network:" "TRON (TRC-20)"
+  [DetailRow] "Confirmations:" "847"
+
+  [ButtonRow]
+    [Button "📋 Copy TX"] [Button "🔗 Explorer"] [Button "📸 Screenshot"] [Button "📤 Share"]
+      ↓ Copy TX → [Icon ✓ on button 1s] + [Toast "Copied"]
+      ↓ Explorer → new browser tab
+      ↓ Screenshot → file save + [Toast "Screenshot saved"]
+      ↓ Share → clipboard copy of text summary + [Toast "Summary copied"]
+
+---
+
+[RightPanel — Minting Screen]
+
+  CARD "Token Supply"
+    [DonutChart — large — green sector Owner — tiny other sectors]
+    hover sector → [Tooltip: address + balance]
+    [ChartAnimation — rotate draw on load]
+    "Total Supply:" "1,010,000,000 USDT" [h4]
+    "Minted Today:" "+10,000,000"
+    "Holders:" "4" [red — small — indicating low]
+
+  CARD "Wallet Balance"
+    [Icon wallet]
+    "9,915,000 USDT" [h2 green bold]
+    "Token Balance (Flash)" [label gray]
+    [Divider]
+    "Gas: 1,250 TRX" [green]
+
+  CARD "License Limit"
+    "Daily Used:" "$125,000"
+    "Daily Limit:" "$5,000,000"
+    [ProgressBar green — 2.5%]
+    "Resets in:" "9h 28m" [countdown]
+
+---
+
+# SCREEN 05 — Flash Sender
+
+LAYOUT
+  [MainPanel — 70% left]
+  [SidePanel — 30% right]
+
+---
+
+## MAIN PANEL
+
+"⚡ Flash Sender" [h1 white bold]
+
+[TabRow — top of panel]
+  [Tab "Single Send" — ACTIVE — underline green]
+  [Tab "Bulk Send"]
+  ↓ click → underline slides + content fade swap
+
+---
+
+### SINGLE SEND TAB
+
+[FromRow — bg darker — rounded — non-editable]
+  [Icon wallet green]
+  "TLa5xQ...7mKq2" [monospace gray]
+  "9,915,000 USDT" [balance — green — right]
+  [Dot green] "Connected"
+  [Button "Change" — text blue tiny]
+    ↓ → [Modal wallet list]
+
+[Label "Recipient Address"]
+[InputRow]
+  [Input — large — full width — "Enter wallet address..."]
+    STATE idle → border gray
+    STATE focus → border green + glow
+    STATE typing → instant validation
+      ↳ TRON valid → [Dot ✓ green inline right] "Valid TRON address"
+      ↳ invalid format → [Dot ✗ red] "Invalid address format"
+      ↳ valid + confirmed → [InfoCard slide-expand below]
+        "Active since 2024"
+        "Transactions: 347"
+        "Holds USDT: ✅"
+  [Button "📋" — paste icon — right of input]
+    ↓ click → pastes clipboard value
+  [Button "⬛" — QR icon]
+    ↓ click → [Modal QR Scanner — dark bg — camera view square center]
+      ↓ scan success → input fills + modal fade close
+  [Button "📒" — address book icon]
+    ↓ click → [Drawer slides from right]
+
+      DRAWER "Address Book"
+        [Input "Search..." — icon 🔍 — top]
+        [AddressRow] "ضحية_01" "TQx7k...8kPm" [Badge "TRC20"] [Button "Select →"]
+          ↓ Select → drawer slide out + input fills
+        [AddressRow] "ضحية_02" "0xAbC...3DeF" [Badge "ERC20"] [Button "Select →"]
+        [AddressRow] "ضحية_03" "0x7Cd...1eB4" [Badge "BEP20"] [Button "Select →"]
+        [Button "+ Save Current Address" — green text — bottom]
+        [Button "← Close" — gray — bottom]
+          ↓ click or outside tap → drawer slides out right
+
+[Label "Amount"]
+[AmountRow]
+  [Input — large — numeric — big font]
+    "0.000000" [placeholder]
+    STATE > balance → border red + "Exceeds balance" [red below]
+    STATE valid → border green
+    live update → SummaryCard updates instantly
+  "USDT" [text — right of input — gray static]
+
+[QuickAmountRow]
+  [Chip "100"] [Chip "500"] [Chip "1K"] [Chip "5K"] [Chip "10K"] [Chip "50K"] [Chip "100K"] [Chip "MAX"]
+  ↓ click chip → input fills + chip turns green + pulse
+  ↓ click MAX → input fills with max balance + "Available" text turns green
+
+"Available: 9,915,000 USDT" [small gray — right below chips]
+
+[Label "Network"]
+[NetworkChips — horizontal row]
+  [Chip "TRON" — icon red — SELECTED: green bg + green border]
+  [Chip "BSC" — icon yellow]
+  [Chip "ETH" — icon blue]
+  [Chip "Polygon" — icon purple]
+  [Chip "Solana" — icon gradient]
+  ↓ chip switch → old chip: bg fade gray + new chip: bg fade green [150ms]
+  ↓ address/network mismatch → [WarningBanner appears below]
+    [Icon ⚠ yellow] "Address format doesn't match selected network" [yellow text]
+    ↓ on fix → banner slide-collapse
+
+[AdvancedToggle — full width clickable row]
+  "Advanced Settings" [text left]
+  [Icon ▼ — right — rotates ▲ on open]
+  ↓ click → accordion expand [200ms]
+
+    [Label "Gas Mode"]
+    [RadioGroup — horizontal]
+      ○ Auto (Recommended)
+      ○ Low (Slower)
+      ○ Fast (Priority)
+      ● Custom
+        ↓ select Custom → [Input "Gwei" slides expand below]
+
+    [Label "Gas Limit"]
+    [Input "100000" — disabled with auto label]
+    [Toggle "Auto" — right — ON green]
+      STATE OFF → input enabled
+
+    [Toggle "Generate Screenshot after send" — green ON]
+    [Toggle "Auto-copy TX to clipboard" — green ON]
+
+[SummaryCard — green dashed border — slide up when all fields valid]
+  "Sending:" "10,000 USDT" [green]
+  "To:" "TQx7k...8kPm"
+  "Network:" "TRON (TRC-20)"
+  "Est. Fee:" "~8 TRX ($0.96)"
+  "Est. Time:" "~3 seconds"
+
+[Button "⚡ FLASH NOW" — green gradient — very large — full width — green glow shadow]
+  STATE disabled → gray [if any field invalid]
+  STATE hover → glow intensifies + slight scale up
+  ↓ click
+  → [Modal Confirm Flash — scale-up + backdrop fade]
+
+    MODAL "Confirm Flash Transaction"
+      "Amount: 10,000 USDT" [h3]
+      "To: TQx7kR...8kPm"
+      "Network: TRON (TRC-20)"
+      "Fee: ~8 TRX ($0.96)"
+      [Divider]
+      [Button "✅ Confirm & Send" — green large full width]
+      [Button "Cancel" — text gray center]
+        ↓ Cancel → scale-down close
+        ↓ Confirm & Send → modal content swaps [internal fade]
+
+      MODAL STATE: Executing
+
+        [ProgressRing — large — center — green arc fills 0→100%]
+        [IconCenter — arrow inside ring — changes per stage]
+
+        "Building transaction..." [h4 — below ring — changes]
+        ↓ 0→25% ring
+        "Signing with private key..."
+        ↓ 25→50%
+        "Broadcasting to TRON..."
+        ↓ 50→70%
+        "Waiting for block inclusion..."
+        ↓ 70→90%
+        "Confirming..." [Counter "1/20" counting live to "20/20"]
+        ↓ 90→100%
+
+        STATE complete:
+        [Ring → ✓ large green — pop animation]
+        [ParticleBurst — green particles — outward — 0.5s]
+        "Flash Successful! ✅" [h2 green bold center]
+
+        [ReceiptCard — slide up]
+          "TX Hash:" "a7f3c9...2b8e4d" [green monospace]
+          [Button "📋 Copy TX"]
+          [Button "🔗 Open Explorer" — blue link]
+          [Divider]
+          "Block: #58,234,920"
+          "Confirmations: 20 ✅"
+          "Fee: 7.8 TRX ($0.94)"
+          "Time: 4.2 seconds"
+
+        [ActionRow — 4 buttons equal]
+          [Button "📋 Copy TX"]
+            ↓ → [Icon ✓ on button 1s] + [Toast "Copied"]
+          [Button "🔗 Explorer"]
+            ↓ → new tab
+          [Button "📸 Screenshot"]
+            ↓ → file save + [Toast "Screenshot saved"]
+          [Button "📤 Share"]
+            ↓ → clipboard text summary + [Toast "Summary copied"]
+
+        [FooterRow]
+          [Button "⚡ Send Another" — green]
+            ↓ → form resets + modal closes
+          [Button "✕ Close" — gray]
+            ↓ → modal fade close
+
+---
+
+### BULK SEND TAB
+
+[ToolbarRow]
+  [Button "📄 Import CSV"]
+    ↓ → system file dialog
+    ↓ file chosen → table rows cascade-fill [50ms each]
+  [Button "+ Add Manually" — text green]
+    ↓ → new empty row slide-down
+
+[BulkTable]
+
+  HEADER
+    "#" "Address" "Amount" "Network" "Status" "Delete"
+
+  ROW editable
+    "1"
+    [Input — address — inline]
+      STATE valid → [Dot ✓ green tiny]
+      STATE invalid → [Dot ✗ red tiny]
+    [Input — amount — numeric — inline]
+    [Select ▼ "TRON" — tiny]
+    "Ready" [gray]
+    [Icon 🗑 red]
+      ↓ click → row slide-up collapse remove
+
+  ADD ROW
+    [Button "+ Add Row" — full width — dashed border green — dot green]
+
+[BulkSummary]
+  "Recipients: 5"   "Total: 190,000 USDT"   "Gas: ~40 TRX"   "Time: ~25s"
+
+"Execution Mode" [label]
+[Select ▼ "Sequential (Safer)"]
+  ○ Sequential (Safer)
+  ○ Parallel (Faster)
+  ○ MultiSend Contract (Cheapest)
+
+"Delay between TXs:" [label]
+[Toggle "Random Delay" — gray OFF]
+  ON → green + [Select ▼ "1–10 seconds"]
+
+"On Failure:" [label]
+[RadioGroup]
+  ● Skip & Continue
+  ○ Stop All
+  ○ Retry 3x then Skip
+
+[Button "⚡ Bulk Flash" — green large — full width]
+  ↓ click → [Modal confirm — scale up]
+    "Flash to 5 recipients — 190,000 USDT total"
+    [Button "Confirm"] [Button "Cancel"]
+    ↓ Confirm → modal → execution view
+
+    EXECUTION VIEW
+      [ProgressBar — green — 0→100% live]
+      "3 / 5 Complete" [counter live]
+
+      [ExecutionTable live-updating]
+        [Dot ✓] "TQx7k...8kPm" "10,000" "TX:a7f3.." "✅"
+        [Dot ✓] "TVm3a...2nLp" "50,000" "TX:b2d8.." "✅"
+        [Spinner] "TRk9x...7wQs" "25,000" "Sending..." "🔄"
+        [Dot gray] "TAbc1...9DeF" "100,000" "Queued" "⏸"
+        [Dot gray] "TXyz7...3GhI" "5,000" "Queued" "⏸"
+
+        STATE row failed: [Dot ✗ red] "❌" + hover → [Tooltip error reason]
+
+      [ControlRow]
+        [Button "⏸ Pause"] [Button "⏭ Skip"] [Button "⏹ Cancel All"]
+
+      STATE all complete:
+        [ProgressBar full green]
+        [Icon ✓ large green pop]
+        "✅ 5/5 Successful!" [h2 green]
+        [Toast "Bulk Flash Complete ✅" bottom right]
+        [Button "Done" — green — closes modal]
+
+---
+
+## SIDE PANEL
+
+CARD "Wallet Balance"
+  [Icon wallet]
+  "9,915,000 USDT" [h2 white bold]
+  "Flash Token Balance" [small gray]
+  [Divider]
+  "TRX: 1,250" [green]
+  "BNB: 0.45" [green]
+  "ETH: 0.02" [green]
+
+CARD "Network Status"
+  [Dot green pulsing] "TRON Mainnet"
+  "Block: #58,235,441"
+  "TPS: 1,847"
+  "Congestion: Low"
+  [MiniBar — green short fill — left]
+
+CARD "Recent Recipients"
+  "Quick Send" [h4]
+
+  [RecipientRow]
+    "TQx7k...8kPm" [truncated]
+    "Last: 10,000 USDT"
+    [Button "↗ Resend" — text green small]
+      ↓ → fills address + amount fields
+
+  [RecipientRow]
+    "TVm3a...2nLp"
+    "Last: 50,000 USDT"
+    [Button "↗ Resend"]
+
+  [RecipientRow]
+    "TRk9x...7wQs"
+    "Last: 25,000 USDT"
+    [Button "↗ Resend"]
+
+---
+
+# SCREEN 06 — Wallet Manager
+
+"Wallet Manager" [h1]
+
+[PrimaryWalletCard — border green solid — large — rounded]
+  [Badge "Primary" — green — top right corner]
+  [Icon wallet large green]
+  [Dot green] "Connected"
+  "TLa5xQ7mKq2AbCdEfGhIjKlMnOpQrSt" [monospace full — center]
+  [Button "📋" — copy tiny]
+
+  [BalancePillsRow]
+    [Pill "1,250 TRX" — red tint]
+    [Pill "9,915,000 USDT Flash" — green]
+    [Pill "0.45 BNB" — yellow tint]
+    [Pill "0.02 ETH" — blue tint]
+
+  [ButtonRow]
+    [Button "View on Explorer" — blue text]
+    [Button "Disconnect" — red text]
+      ↓ Disconnect → [Modal confirm "Disconnect wallet?"]
+        [Button "Yes, Disconnect" red] [Button "Cancel" gray]
+
+[SectionHeader "Other Wallets"]
+
+[WalletCardSmall]
+  "0xAbC...3DeF" [monospace]
+  [Badge "ERC20"] [Badge "BSC"]
+  "0.45 BNB" [balance gray]
+  [Button "Set Primary" — text green small]
+    ↓ → card animates moving to top + swaps with primary card [slide animation]
+  [Button "🗑" — red icon — right]
+    ↓ → [Modal confirm delete]
+
+[WalletCardSmall]
+  "0x7Cd...1eB4"
+  [Badge "ETH"]
+  "0.02 ETH"
+  [Button "Set Primary"] [Button "🗑"]
+
+[Button "+ Add Wallet" — dashed border green — full width — large]
+  ↓ click → [Modal "Import Wallet" — scale-up]
+
+    MODAL "Import Wallet"
+      [TabRow]
+        [Tab "Private Key" ACTIVE]
+        [Tab "Seed Phrase"]
+
+      TAB Private Key
+        [Label "Private Key"]
+        [Input — type password — dots — full width]
+          [Button "👁" — right — toggle visibility]
+          STATE show → text visible + button "🙈"
+        "Network:" [label]
+        [Select ▼ "TRON"]
+        [Button "Import" — green full width]
+          ↓ valid → modal close + new card slides in to list
+          ↓ invalid → [WarningBanner] "Invalid private key format" [red]
+
+      TAB Seed Phrase
+        "Enter your 12-word seed phrase" [label gray]
+        [Grid 3col 4row — 12 input boxes numbered 1-12]
+          [Input "1."] [Input "2."] [Input "3."]
+          [Input "4."] [Input "5."] [Input "6."]
+          [Input "7."] [Input "8."] [Input "9."]
+          [Input "10."] [Input "11."] [Input "12."]
+        [Toggle "24 words" — right — if ON grid expands to 24]
+        [Button "Import" — green full width]
+
+---
+
+# SCREEN 07 — Network Selector
+
+"Network Configuration" [h1]
+
+[NetworkGrid — 3 columns]
+
+  NETCARD "TRON"
+    [Icon TRON red — large]
+    "TRON (TRC-20)" [h4]
+    [Dot green] "Online"
+    "Block: #58,235,441" [small gray]
+    "Block Time: 3s"
+    "TPS: 1,847"
+    [CongestionBar small]
+    [Badge "Default" — green — top right]
+    STATE hover → card lifts + border brightens
+    ↓ click → [Drawer slides from right — network detail]
+
+  NETCARD "BSC"
+    [Icon BNB yellow]
+    "BSC (BEP-20)"
+    [Dot green] "Online"
+    "Block: #38,924,100"
+    "Block Time: 3s"
+    [Badge "—"]
+
+  NETCARD "Ethereum"
+    [Icon ETH blue]
+    "Ethereum (ERC-20)"
+    [Dot yellow] "Slow"
+    "Block: #19,847,221"
+    "Block Time: 12s"
+
+  NETCARD "Polygon"
+    [Icon MATIC purple]
+    "Polygon"
+    [Dot green] "Online"
+
+  NETCARD "Solana"
+    [Icon SOL gradient]
+    "Solana (SPL)"
+    [Dot green]
+
+  NETCARD "Arbitrum"
+    [Icon ARB]
+    "Arbitrum (ERC-20)"
+    [Dot green]
+
+[Divider "Testnets" — label center gray]
+
+[NetworkGrid — smaller cards — dashed borders]
+  NETCARD "TRON Nile Testnet" [Dot green]
+  NETCARD "BSC Testnet" [Dot green]
+  NETCARD "Ethereum Sepolia" [Dot red]
+
+DRAWER — Network Detail
+
+  "TRON — RPC Configuration" [h3]
+  [Button "✕" — top right closes drawer slide-out]
+
+  "Endpoints" [label]
+
+  [RPCTable]
+
+    ROW 1
+      "api.trongrid.io" [monospace]
+      "45ms" [green — fast]
+      [Dot green] "Online"
+      [Radio ●] selected
+
+    ROW 2
+      "api.tronstack.io"
+      "82ms" [yellow]
+      [Dot green]
+      [Radio ○]
+
+    ROW 3
+      "tron-rpc.publicnode.com"
+      "120ms" [orange]
+      [Dot yellow]
+      [Radio ○]
+
+    ROW 4
+      "api.shasta.trongrid.io"
+      "—"
+      [Dot red] "Offline"
+      [Radio ○ — disabled]
+
+  [Button "🔄 Test All" — gray — full width]
+    ↓ click → each row shows [Spinner tiny] sequentially → resolves to ping + dot color
+
+  [Label "+ Custom RPC"]
+  [Input "https://..." — full width — gray border]
+    [Button "Add →" — green small right]
+    ↓ click Add → [TestingInline "Testing..."] → [Dot green] added to list
+
+  "Auto-Failover" [label]
+  [Toggle — green ON]
+
+  [Button "Set as Default" — green full width]
+    ↓ click → [Badge "Default" appears on this card] + removed from previous default + [Toast "Default updated"]
+
+  [Button "Close" — gray full width]
+    ↓ → drawer slides out right
+
+---
+
+# SCREEN 08 — TX History
+
+"Transaction History" [h1]
+
+[FilterBar — full width — top]
+
+  [TabRow left]
+    [Tab "All" ACTIVE underline green]
+    [Tab "Mints"]
+    [Tab "Transfers"]
+    [Tab "Failed"]
+    ↓ click → table fade swap
+
+  [FilterControls right]
+    [Input "Search TX Hash or address..." — icon 🔍 — medium]
+      ↓ typing → table live filters + fade
+    [Select ▼ "All Networks"]
+      options: All / TRON / BSC / ETH / Polygon
+    [Input "From" — date]
+      ↓ click → [DatePicker popover — small calendar]
+    [Input "To" — date]
+      ↓ click → [DatePicker]
+    [Button "Export ▼" — gray]
+      ↓ click → [Dropdown]
+        "📥 Export CSV"
+        "📥 Export JSON"
+        "📥 Export PDF"
+        ↓ click any → [Toast "Exporting..."] → [Toast "Export Complete ✅"]
+
+[MainTable]
+
+  HEADER
+    "Time" "Type" "Amount" "From" "To" "Network" "TX Hash" "Status"
+
+  ROW — hover: bg lighten + [Icon → right]
+    "2026-08-16 14:32"
+    [Badge "Mint" blue]
+    "10,000,000 USDT"
+    "TLa5x...7mKq" [copy icon]
+    "TLa5x...7mKq"
+    [Icon TRON tiny] "TRC20"
+    "a9c3f7...2b8e" [copy icon]
+    [Dot green] "✅"
+    ↓ click row → [Modal TXD — see MODAL TXD]
+
+  ROW
+    "2026-08-16 15:10"
+    [Badge "Transfer" green]
+    "10,000 USDT"
+    "TLa5x...7mKq"
+    "TQx7k...8kPm"
+    [Icon TRON] "TRC20"
+    "a7f3c9...4b8d"
+    [Dot green] "✅"
+
+  ROW
+    "2026-08-15 09:45"
+    [Badge "Mint" blue]
+    "100,000,000 USDT"
+    "—" "—" "—" "—"
+    [Dot red] "❌"
+    hover row → [Tooltip "Exceeded daily limit"]
+
+[Pagination — bottom]
+  [Button "← Prev" — disabled on page 1]
+  [PageNumber "1" — active green bg]
+  [PageNumber "2"]
+  [PageNumber "3"]
+  [Button "Next →"]
+  [Select ▼ "25 per page" — right] options: 10 / 25 / 50 / 100
+
+---
+
+# SCREEN 09 — Settings
+
+"Settings" [h1]
+
+SECTION "Appearance"
+  [Label "Theme"]
+  [ThemeOptionRow]
+    [ThemeChip "Dark" — dark preview — SELECTED: border green]
+    [ThemeChip "Light" — light preview]
+    [ThemeChip "Aqua" — blue preview]
+    [ThemeChip "Gold" — gold preview]
+    ↓ click any → entire app UI transitions [0.3s ease] to new theme
+
+  [Label "Language"]
+  [Select ▼ "English"]
+    العربية / 中文 / Español / Français / Русский
+
+[Divider]
+
+SECTION "Defaults"
+  [Label "Default Network"]
+  [Select ▼ "TRON (TRC-20)"]
+
+  [Label "Default Gas Mode"]
+  [RadioGroup horizontal]
+    ● Auto
+    ○ Low
+    ○ Fast
+
+  [Label "Default Token"]
+  [Select ▼ "USDT"]
+
+[Divider]
+
+SECTION "Security"
+  [Row]
+    "Auto-Lock After Inactivity" [text]
+    [Toggle — green ON — right]
+    [Select ▼ "15 minutes" — right]
+
+  [Row]
+    "Confirm Before Sending" [text]
+    [Toggle — green ON]
+
+  [Row]
+    "Hide Balances" [text]
+    [Toggle — gray OFF]
+      ↓ ON → all balance figures replaced with "•••••" across all screens
+
+  [Row]
+    "Require Password on Open" [text]
+    [Toggle — gray OFF]
+
+[Divider]
+
+SECTION "Notifications"
+  [Row] "Sound on Success" [Toggle green ON]
+  [Row] "Desktop Notifications" [Toggle green ON]
+  [Row] "TX Confirmation Alerts" [Toggle green ON]
+  [Row] "Daily Limit Warning at 80%" [Toggle green ON]
+
+[Divider]
+
+SECTION "Data"
+  [Button "Clear TX History" — red border — text red]
+    ↓ → [Modal confirm "Clear all history?" red]
+      [Button "Yes, Clear" red] [Button "Cancel" gray]
+  [Button "Export All Data — JSON" — gray]
+
+[FooterRow]
+  [Button "↩️ Reset to Defaults" — gray]
+    ↓ → [Modal confirm]
+  [Button "💾 Save Settings" — green — right]
+    ↓ → [Toast "Settings Saved ✅"]
+
+---
+
+# SCREEN 10 — License
+
+"License Management" [h1]
+
+[CurrentLicenseCard — border green — large]
+  [Badge "PRO" — green gradient — large — center]
+  [Divider]
+  [Dot green] "Status: Active" [text green]
+  "Expires: November 12, 2026" [gray]
+  "87 days remaining" [small green]
+  [DaysProgressBar — green remaining / gray elapsed]
+  [Divider]
+  "Daily Limit:" "$5,000,000"
+  "Token Duration:" "100 days per flash"
+  "Networks:" "All (TRC20, ERC20, BEP20, Polygon, SOL)"
+  "Batch Send:" "✅"
+  "Bulk Mint:" "✅"
+  "API Access:" "❌"
+
+[Divider]
+
+"Upgrade Plan" [h2]
+
+[PlanCards — 3 columns]
+
+  CARD "Demo"
+    [bg gray tinted]
+    "$15" [h2 bold]
+    "/ 7 days"
+    [Divider]
+    "Daily Limit: $500" ✓
+    "Duration: 30 days" ✓
+    "Networks: TRC20 only" ✓
+    "Batch Send: ❌"
+    "Bulk Mint: ❌"
+    "Support: ❌"
+    [Button "Downgrade" — gray — full width]
+
+  CARD "Pro"
+    [bg blue tinted]
+    [Badge "Current ✓" — green — top right]
+    "$350" [h2]
+    "/ 3 months"
+    [Divider]
+    "Daily Limit: $5,000,000" ✓
+    "Duration: 100 days" ✓
+    "Networks: All" ✓
+    "Batch Send: ✅"
+    "Bulk Mint: ✅"
+    "Support: 24/7" ✓
+    [Button "Current Plan" — disabled green — full width]
+
+  CARD "Master"
+    [bg gold gradient]
+    [Badge "⭐ Recommended" — gold — top right — pulsing glow]
+    "$2,500" [h2 gold bold]
+    "/ 12 months"
+    [Divider]
+    "Daily Limit: $50,000,000" ✓
+    "Duration: 365 days" ✓
+    "Networks: All" ✓
+    "Batch Send: ✅"
+    "Bulk Mint: ✅"
+    "API Access: ✅"
+    "Source Code: ✅"
+    "Support: VIP" ✓
+    [Button "Upgrade to Master" — gold gradient — full width — glow]
+      ↓ click → [Modal Payment — scale-up]
+
+        MODAL "Upgrade to Master"
+
+          "Send payment to:" [label]
+          [AddressBox]
+            "0xPayment...Address" [monospace — large — center]
+            [Button "📋 Copy" — below]
+          [QRCode — medium — center]
+          [Divider]
+          "Select payment currency:" [label]
+          [CurrencyChips]
+            [Chip "USDT" ACTIVE green]
+            [Chip "BTC"]
+            [Chip "ETH"]
+          "Amount: $2,500.00" [h3 — updates per currency]
+          [Divider]
+          [CountdownTimer]
+            "Payment window:" "29:58" [red bold — counts down live]
+            ↓ reaches 0:00 → timer turns red flashing + "Window Expired — [Button Refresh]"
+          [StatusRow]
+            [Spinner small] "Waiting for payment..."
+          [Divider]
+          [Button "Cancel" — gray text]
+            ↓ → modal close
+
+          STATE: payment detected
+            [Spinner → ✓ large green pop]
+            "Payment Confirmed! ✅" [h2 green]
+            "Your license has been upgraded to Master"
+            [Button "Done" — green]
+              ↓ → modal close + current license card updates with animation
+
+[Divider]
+
+"Activate New License" [h3]
+[Label "License Key"]
+[Input "XXXX-XXXX-XXXX-XXXX" — monospace]
+  STATE focus → border green
+[Button "✅ Activate Key" — green]
+  ↓ → [Spinner inline] → success: [Toast "License Activated ✅"] + card updates
+  ↓ → failure: border red + "Invalid or expired key" [red text]
+
+---
+
+# GLOBAL UI ELEMENTS
+
+## Toast Notifications — bottom right — always on top
+
+  STATE success → [bg green] [Icon ✓] "Message here" [fade in slide up → 3s → fade out slide down]
+  STATE error → [bg red] [Icon ✗]
+  STATE warning → [bg yellow] [Icon ⚠]
+  STATE info → [bg blue] [Icon ℹ]
+  multiple toasts → stack vertically with 8px gap
+
+## Modals — global
+
+  backdrop → [bg black 60% opacity — fade in]
+  modal → [scale 0.8→1.0 + fade in — 200ms ease-out]
+  close:
+    ↓ click backdrop → modal: scale 1.0→0.8 + fade out + backdrop fade out
+    ↓ click ✕ → same
+    ↓ Escape key → same
+    ↓ backdrop click attempt when [ConfirmModal no-dismiss] → backdrop pulses 3px shake
+
+## Page Transitions
+
+  [NavItem] click →
+    current content: slide right 30px + fade out [150ms]
+    new content: slide from left 30px → 0 + fade in [200ms]
+    [TopBar title]: fade swap [100ms]
+    [NavItem] active indicator: slides vertically to new item
+
+## Loading States
+
+  button submitting → text hides + [Spinner small white inline] + button disabled
+  table loading → shimmer rows [bg gradient left→right animated]
+  card loading → shimmer rectangles
+  page loading → [ProgressBar thin green — top of viewport — 0→100%]
+
+## Sidebar Collapsed State (small screens)
+
+  sidebar → hidden off-screen left
+  [HamburgerIcon ☰ — top left TopBar]
+  ↓ click → [Drawer slides in from left over content — backdrop]
+    same nav items
+    ↓ click nav → drawer slides out + navigate
+    ↓ backdrop click → drawer slides out
+
+## Responsive Card Layout (small screens)
+
+  4-col stat cards → 2-col
+  3-col plan cards → 1-col scroll
+  table → card-per-row stacked view
+  side panel → collapses below main panel
